@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.ui-sonner {
+  @apply font-sans;
+}

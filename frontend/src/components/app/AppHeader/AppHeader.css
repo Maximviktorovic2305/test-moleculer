@@ -1,0 +1,24 @@
+@reference "tailwindcss";
+
+.app-header {
+  @apply mb-6 flex flex-col gap-3 rounded-2xl border p-5 shadow-sm;
+  @apply backdrop-blur md:flex-row md:items-center md:justify-between;
+  border-color: var(--color-border-soft);
+  background: color-mix(in srgb, var(--color-bg-surface) 90%, transparent);
+}
+
+.app-header__eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.22em];
+}
+
+.app-header__title {
+  @apply text-2xl font-semibold md:text-3xl;
+}
+
+.app-header__actions {
+  @apply flex items-center gap-2;
+}
+
+.app-header__badge {
+  @apply text-xs;
+}

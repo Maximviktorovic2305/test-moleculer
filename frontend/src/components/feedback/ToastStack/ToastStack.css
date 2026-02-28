@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.toast-stack {
+  @apply relative z-50;
+}

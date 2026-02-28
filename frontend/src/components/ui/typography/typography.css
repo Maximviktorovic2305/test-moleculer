@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+.ui-typography {
+  @apply text-sm;
+  color: inherit;
+}
+
+.ui-typography--h1 {
+  @apply text-2xl font-semibold md:text-3xl;
+}
+
+.ui-typography--h2 {
+  @apply text-xl font-semibold;
+}
+
+.ui-typography--h3 {
+  @apply text-lg font-semibold;
+}
+
+.ui-typography--body {
+  @apply text-sm;
+}
+
+.ui-typography--lead {
+  @apply text-sm;
+  color: var(--color-text-subtle);
+}
+
+.ui-typography--muted {
+  @apply text-sm;
+  color: var(--color-text-muted);
+}
+
+.ui-typography--small {
+  @apply text-xs;
+}
+
+.ui-typography--eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.22em];
+  color: var(--color-text-accent);
+}

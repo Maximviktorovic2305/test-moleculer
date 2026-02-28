@@ -1,0 +1,37 @@
+:root {
+  --color-bg-canvas: #f8f7ef;
+  --color-bg-canvas-soft: #f7f3de;
+  --color-bg-canvas-warm: #efe8c9;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-muted: #f5f5f4;
+
+  --color-bg-primary: #1c1917;
+  --color-bg-primary-hover: #292524;
+  --color-bg-secondary: #f5f5f4;
+  --color-bg-secondary-hover: #e7e5e4;
+  --color-bg-destructive: #e11d48;
+  --color-bg-destructive-hover: #be123c;
+
+  --color-text-primary: #1c1917;
+  --color-text-inverse: #fafaf9;
+  --color-text-muted: #78716c;
+  --color-text-subtle: #57534e;
+  --color-text-soft: #a8a29e;
+  --color-text-accent: #b45309;
+  --color-text-danger: #be123c;
+
+  --color-border-default: #d6d3d1;
+  --color-border-soft: #e7e5e4;
+  --color-border-strong: #a8a29e;
+  --color-border-inverse: #1c1917;
+
+  --color-focus-ring: rgba(28, 25, 23, 0.2);
+  --color-focus-ring-active: rgba(28, 25, 23, 0.1);
+
+  --app-bg-gradient: radial-gradient(
+    circle at top left,
+    var(--color-bg-canvas-soft),
+    var(--color-bg-canvas-warm) 40%,
+    var(--color-bg-canvas)
+  );
+}

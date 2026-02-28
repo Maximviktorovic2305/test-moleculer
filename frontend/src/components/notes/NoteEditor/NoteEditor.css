@@ -1,0 +1,30 @@
+@reference "tailwindcss";
+
+.note-editor__header {
+  @apply flex flex-row items-start justify-between space-y-0;
+}
+
+.note-editor__form {
+  @apply space-y-3;
+}
+
+.note-editor__field {
+  @apply space-y-1;
+}
+
+.note-editor__textarea {
+  @apply min-h-[10rem];
+}
+
+.note-editor__submit {
+  @apply min-w-52;
+}
+
+.note-editor__control--invalid {
+  border-color: var(--color-bg-destructive);
+}
+
+.note-editor__error {
+  @apply text-xs;
+  color: var(--color-text-danger);
+}

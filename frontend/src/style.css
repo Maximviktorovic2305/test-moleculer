@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "@/styles/colors.css";
+@import "tailwindcss";
+
+:root {
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  text-rendering: geometricPrecision;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  @apply m-0 min-h-screen antialiased;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+}

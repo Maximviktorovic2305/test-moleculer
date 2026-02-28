@@ -1,0 +1,18 @@
+export const API_ALIASES: Record<string, string> = {
+	"GET /health": "api.health",
+	"POST /auth/register": "auth.register",
+	"POST /auth/login": "auth.login",
+	"POST /auth/refresh": "auth.refresh",
+	"POST /auth/logout": "auth.logout",
+	"POST /auth/validate": "auth.validate",
+	"GET /auth/me": "auth.me",
+	"GET /notes": "notes.list",
+	"GET /notes/:id": "notes.get",
+	"POST /notes": "notes.create",
+	"PATCH /notes/:id": "notes.update",
+	"DELETE /notes/:id": "notes.remove",
+	"GET /categories": "categories.list",
+	"POST /categories": "categories.create",
+	"PATCH /categories/:id": "categories.update",
+	"DELETE /categories/:id": "categories.remove",
+};

@@ -1,0 +1,304 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: notes-app
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notes-config
+  namespace: notes-app
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  CORS_ORIGIN: "http://notes.local"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "notes_db"
+  DB_USER: "admin"
+  DB_SYNC: "false"
+  DB_RUN_MIGRATIONS: "true"
+  JWT_EXPIRES_IN: "15m"
+  REFRESH_TOKEN_EXPIRES_IN: "7d"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: notes-secrets
+  namespace: notes-app
+type: Opaque
+stringData:
+  DB_PASSWORD: "change-me-db-password"
+  JWT_SECRET: "change-me-jwt-secret-at-least-16-chars"
+  REFRESH_TOKEN_SECRET: "change-me-refresh-secret-at-least-16-chars"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: notes-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: notes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notes-secrets
+                  key: DB_PASSWORD
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: notes-app
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-backend
+  namespace: notes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-backend
+  template:
+    metadata:
+      labels:
+        app: notes-backend
+    spec:
+      containers:
+        - name: backend
+          image: notes-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: NODE_ENV
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: PORT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: LOG_LEVEL
+            - name: CORS_ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: CORS_ORIGIN
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_USER
+            - name: DB_SYNC
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_SYNC
+            - name: DB_RUN_MIGRATIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: DB_RUN_MIGRATIONS
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notes-secrets
+                  key: DB_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: notes-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: JWT_EXPIRES_IN
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: notes-secrets
+                  key: REFRESH_TOKEN_SECRET
+            - name: REFRESH_TOKEN_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-config
+                  key: REFRESH_TOKEN_EXPIRES_IN
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-backend
+  namespace: notes-app
+spec:
+  selector:
+    app: notes-backend
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-frontend
+  namespace: notes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-frontend
+  template:
+    metadata:
+      labels:
+        app: notes-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: notes-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-frontend
+  namespace: notes-app
+spec:
+  selector:
+    app: notes-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notes-ingress
+  namespace: notes-app
+spec:
+  rules:
+    - host: notes.local
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-backend
+                port:
+                  number: 3000
+          - path: /notes
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-backend
+                port:
+                  number: 3000
+          - path: /categories
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-backend
+                port:
+                  number: 3000
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-backend
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-frontend
+                port:
+                  number: 80

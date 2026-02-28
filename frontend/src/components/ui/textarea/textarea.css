@@ -1,0 +1,18 @@
+@reference "tailwindcss";
+
+.ui-textarea {
+  @apply flex min-h-[5.625rem] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-colors;
+  @apply focus-visible:outline-none focus-visible:ring-1 active:ring-1;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+  --tw-ring-color: var(--color-focus-ring);
+}
+
+.ui-textarea::placeholder {
+  color: var(--color-text-soft);
+}
+
+.ui-textarea:active {
+  --tw-ring-color: var(--color-focus-ring-active);
+}

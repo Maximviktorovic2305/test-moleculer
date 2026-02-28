@@ -1,0 +1,19 @@
+@reference "tailwindcss";
+
+.ui-input {
+  @apply flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-colors;
+  @apply file:border-0 file:bg-transparent file:text-sm file:font-medium;
+  @apply focus-visible:outline-none focus-visible:ring-1 active:ring-1;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+  --tw-ring-color: var(--color-focus-ring);
+}
+
+.ui-input::placeholder {
+  color: var(--color-text-soft);
+}
+
+.ui-input:active {
+  --tw-ring-color: var(--color-focus-ring-active);
+}

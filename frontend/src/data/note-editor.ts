@@ -1,0 +1,18 @@
+export const NOTE_EDITOR_COPY = {
+  editTitle: "Редактировать заметку",
+  createTitle: "Новая заметка",
+  subtitle: "Все изменения сохраняются через API",
+  deleteLabel: "Удалить",
+  titleLabel: "Заголовок",
+  titlePlaceholder: "Название заметки",
+  categoryLabel: "Категория",
+  categoryPlaceholder: "Без категории",
+  noCategory: "Без категории",
+  contentLabel: "Содержимое",
+  contentPlaceholder: "Текст заметки",
+  updateSubmit: "Сохранить заметку",
+  createSubmit: "Создать заметку",
+  confirmDeleteTitle: "Удалить заметку?",
+  confirmDeleteDescription: "Действие нельзя отменить.",
+  confirmDeleteAction: "Удалить",
+} as const;

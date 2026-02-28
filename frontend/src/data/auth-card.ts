@@ -1,0 +1,15 @@
+export const AUTH_CARD_COPY = {
+  title: "Вход в систему",
+  subtitle: "Авторизуйтесь для работы с заметками",
+  loginLabel: "Вход",
+  registerLabel: "Регистрация",
+  nameLabel: "Имя",
+  emailLabel: "Email",
+  passwordLabel: "Пароль",
+  namePlaceholder: "Ваше имя",
+  emailPlaceholder: "you@example.com",
+  passwordPlaceholder: "Минимум 6 символов",
+  registerSubmit: "Создать аккаунт",
+  loginSubmit: "Войти",
+  demoPrefix: "Демо:",
+} as const;

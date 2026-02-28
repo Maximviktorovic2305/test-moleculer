@@ -1,0 +1,28 @@
+@reference "tailwindcss";
+
+.ui-badge {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+}
+
+.ui-badge--default {
+  border-color: transparent;
+  background: var(--color-bg-primary);
+  color: var(--color-text-inverse);
+}
+
+.ui-badge--secondary {
+  border-color: transparent;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.ui-badge--outline {
+  border-color: var(--color-border-default);
+  color: var(--color-text-subtle);
+}
+
+.ui-badge--destructive {
+  border-color: transparent;
+  background: var(--color-bg-destructive);
+  color: var(--color-text-inverse);
+}

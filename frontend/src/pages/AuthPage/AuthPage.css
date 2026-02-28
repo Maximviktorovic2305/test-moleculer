@@ -1,0 +1,15 @@
+@reference "tailwindcss";
+
+.auth-page {
+  @apply min-h-screen;
+  background: var(--app-bg-gradient);
+  color: var(--color-text-primary);
+}
+
+.auth-page__container {
+  @apply mx-auto w-full max-w-7xl px-4 py-8 md:px-6;
+}
+
+.auth-page__content {
+  @apply py-6;
+}

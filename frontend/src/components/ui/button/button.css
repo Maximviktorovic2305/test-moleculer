@@ -1,0 +1,92 @@
+@reference "tailwindcss";
+
+.ui-button {
+  @apply relative inline-flex cursor-pointer items-center justify-center gap-2;
+  @apply whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-150;
+  @apply focus-visible:outline-none focus-visible:ring-1 active:ring-1;
+  @apply disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50;
+  --tw-ring-color: var(--color-focus-ring);
+}
+
+.ui-button:active {
+  --tw-ring-color: var(--color-focus-ring-active);
+}
+
+.ui-button__content {
+  @apply inline-flex items-center justify-center;
+}
+
+.ui-button__content--hidden {
+  @apply opacity-0;
+}
+
+.ui-button__spinner-wrap {
+  @apply absolute inset-0 flex items-center justify-center;
+}
+
+.ui-button__spinner {
+  @apply inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent;
+}
+
+.ui-button--default {
+  background: var(--color-bg-primary);
+  color: var(--color-text-inverse);
+}
+
+.ui-button--default:hover {
+  background: var(--color-bg-primary-hover);
+}
+
+.ui-button--secondary {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.ui-button--secondary:hover {
+  background: var(--color-bg-secondary-hover);
+}
+
+.ui-button--outline {
+  border: 0.0625rem solid var(--color-border-default);
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.ui-button--outline:hover {
+  background: var(--color-bg-secondary);
+}
+
+.ui-button--ghost {
+  background: transparent;
+  color: var(--color-text-subtle);
+}
+
+.ui-button--ghost:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.ui-button--destructive {
+  background: var(--color-bg-destructive);
+  color: var(--color-text-inverse);
+}
+
+.ui-button--destructive:hover {
+  background: var(--color-bg-destructive-hover);
+}
+
+.ui-button--size-default {
+  @apply h-9 px-4 py-2;
+}
+
+.ui-button--size-sm {
+  @apply h-8 rounded-md px-3;
+}
+
+.ui-button--size-lg {
+  @apply h-10 rounded-md px-8;
+}
+
+.ui-button--size-icon {
+  @apply h-9 w-9;
+}

@@ -1,0 +1,75 @@
+@reference "tailwindcss";
+
+.notes-sidebar__header {
+  @apply flex flex-row items-center justify-between space-y-0;
+}
+
+.notes-sidebar__title {
+  @apply text-lg;
+}
+
+.notes-sidebar__content {
+  @apply space-y-3;
+}
+
+.notes-sidebar__filters {
+  @apply space-y-2;
+}
+
+.notes-sidebar__list {
+  @apply space-y-2;
+}
+
+.notes-sidebar__list--loading {
+  @apply pointer-events-none opacity-70;
+}
+
+.notes-sidebar__item {
+  @apply w-full cursor-pointer rounded-lg border p-3 text-left transition;
+  @apply focus-visible:outline-none focus-visible:ring-1 active:ring-1;
+  border-color: var(--color-border-soft);
+  background: var(--color-bg-surface);
+  --tw-ring-color: var(--color-focus-ring);
+}
+
+.notes-sidebar__item:hover {
+  border-color: var(--color-border-strong);
+}
+
+.notes-sidebar__item:active {
+  --tw-ring-color: var(--color-focus-ring-active);
+}
+
+.notes-sidebar__item--active {
+  border-color: var(--color-border-inverse);
+  background: var(--color-bg-primary);
+  color: var(--color-text-inverse);
+}
+
+.notes-sidebar__item-title {
+  @apply truncate text-sm font-semibold;
+}
+
+.notes-sidebar__item-content {
+  @apply mt-1 line-clamp-2 text-xs;
+  color: var(--color-text-muted);
+}
+
+.notes-sidebar__item--active .notes-sidebar__item-content {
+  color: var(--color-text-soft);
+}
+
+.notes-sidebar__item-date {
+  @apply mt-2 text-[0.6875rem];
+  color: var(--color-text-soft);
+}
+
+.notes-sidebar__item--active .notes-sidebar__item-date {
+  color: var(--color-text-soft);
+}
+
+.notes-sidebar__state {
+  @apply rounded-lg border border-dashed px-3 py-6 text-center text-sm;
+  border-color: var(--color-border-default);
+  color: var(--color-text-muted);
+}

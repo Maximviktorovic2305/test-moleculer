@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.ui-card {
+  @apply rounded-xl border shadow-sm;
+  border-color: var(--color-border-soft);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.ui-card-header {
+  @apply flex flex-col space-y-1.5 p-6 max-sm:p-4;
+}
+
+.ui-card-title {
+  @apply text-xl font-semibold leading-none tracking-tight;
+}
+
+.ui-card-description {
+  @apply text-sm;
+  color: var(--color-text-subtle);
+}
+
+.ui-card-content {
+  @apply p-6 pt-0 max-sm:p-4 max-sm:pt-0;
+}
+
+.ui-card-footer {
+  @apply flex items-center p-6 pt-0 max-sm:p-4 max-sm:pt-0;
+}

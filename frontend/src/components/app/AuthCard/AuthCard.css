@@ -1,0 +1,40 @@
+@reference "tailwindcss";
+
+.auth-card {
+  @apply mx-auto w-full max-w-md;
+}
+
+.auth-card__mode-switch {
+  @apply mb-4 grid grid-cols-2 gap-2 rounded-md border p-1;
+  border-color: var(--color-border-soft);
+}
+
+.auth-card__mode-button {
+  @apply w-full;
+}
+
+.auth-card__form {
+  @apply space-y-3;
+}
+
+.auth-card__field {
+  @apply space-y-1;
+}
+
+.auth-card__input--invalid {
+  border-color: var(--color-bg-destructive);
+}
+
+.auth-card__error {
+  @apply text-xs;
+  color: var(--color-text-danger);
+}
+
+.auth-card__submit {
+  @apply mt-2 w-full;
+}
+
+.auth-card__hint {
+  @apply mt-4 text-xs;
+  color: var(--color-text-muted);
+}
