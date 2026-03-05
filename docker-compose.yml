@@ -4,10 +4,10 @@ services:
     container_name: notes-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-notes_db}
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-notes_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${POSTGRES_DB:-notes_db}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -36,8 +36,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB:-notes_db}
-      DB_USER: postgres
-      DB_PASSWORD: admin
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-admin}
       DB_SYNC: ${DB_SYNC:-false}
       DB_RUN_MIGRATIONS: ${DB_RUN_MIGRATIONS:-true}
       JWT_SECRET: ${JWT_SECRET}

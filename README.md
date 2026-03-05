@@ -42,7 +42,7 @@ npm run dev
 cp .env.example .env
 ```
 2. Заполните в `.env` минимум:
-- `POSTGRES_PASSWORD`
+- `DB_PASSWORD`
 - `JWT_SECRET`
 - `REFRESH_TOKEN_SECRET`
 3. Запустите:

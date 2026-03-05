@@ -21,7 +21,7 @@ const {
   noteForm,
   categoryDraft,
   busy,
-  bootstrapData,
+  initializeSession,
   logout,
   createNewNote,
   openNote,
@@ -33,7 +33,7 @@ const {
 } = useNotesApp();
 
 onMounted(() => {
-  bootstrapData().catch((error) => {
+  initializeSession().catch((error) => {
     console.error("Workspace bootstrap error", error);
     notifyError("Не удалось загрузить рабочее пространство. Подробности в консоли.");
   });
@@ -81,3 +81,4 @@ const handleLogout = async () => {
     </div>
   </div>
 </template>
+

@@ -1,8 +1,8 @@
 import type { Context, ServiceSchema } from "moleculer";
 
-import { AppDataSource } from "../db/data-source";
-import { RefreshSession } from "../entities/refresh-session.entity";
-import { buildTokenPair, hashRefreshToken } from "../modules/tokens/helpers";
+import { AppDataSource } from "../db";
+import { RefreshSession } from "../entities";
+import { buildTokenPair, hashRefreshToken } from "../modules/tokens";
 import {
 	pairInputSchema,
 	refreshInputSchema,
@@ -10,15 +10,16 @@ import {
 	type PairInput,
 	type RefreshInput,
 	type TokenInput,
-} from "../modules/tokens/schemas";
-import { invalidRefreshTokenError, invalidTokenError } from "../utils/errors";
+} from "../modules/tokens";
 import {
+	createValidationError,
+	invalidRefreshTokenError,
+	invalidTokenError,
 	verifyAccessToken,
 	verifyRefreshToken,
 	type AccessTokenPayload,
 	type RefreshTokenPayload,
-} from "../utils/jwt";
-import { createValidationError } from "../utils/validation";
+} from "../utils";
 
 const TokensService: ServiceSchema = {
 	name: "tokens",

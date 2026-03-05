@@ -1,14 +1,13 @@
 import type { Context, ServiceSchema } from "moleculer";
 
-import { env } from "../config/env";
+import { env } from "../config";
 import { appLogger } from "../logger";
-import { buildRateLimitKey } from "../modules/rate-limit/helpers";
-import { rateLimitConsumeSchema } from "../modules/rate-limit/schemas";
+import { buildRateLimitKey, rateLimitConsumeSchema } from "../modules/rate-limit";
 import type {
 	RateLimitConsumeParams,
 	RateLimitConsumeResult,
-} from "../modules/rate-limit/types";
-import { createValidationError } from "../utils/validation";
+} from "../modules/rate-limit";
+import { createValidationError } from "../utils";
 
 type RateLimitBucket = {
 	count: number;

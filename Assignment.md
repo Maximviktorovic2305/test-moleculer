@@ -6,7 +6,7 @@
 1. Подготовить `.env`:
    - Скопировать `.env.example` в `.env`.
    - Указать минимум:
-     - `POSTGRES_PASSWORD`
+     - `DB_PASSWORD`
      - `JWT_SECRET`
      - `REFRESH_TOKEN_SECRET`
 2. Запустить сервисы:

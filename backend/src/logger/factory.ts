@@ -8,7 +8,7 @@ import {
 	type Logger as WinstonLogger,
 } from "winston";
 
-import { env } from "../config/env";
+import { env } from "../config";
 
 const resolveWinstonLevel = (level: string) => {
 	if (level === "trace") {

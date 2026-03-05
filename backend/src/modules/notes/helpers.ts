@@ -1,7 +1,6 @@
-import { AppDataSource } from "../../db/data-source";
-import { Category } from "../../entities/category.entity";
-import type { Note } from "../../entities/note.entity";
-import { notFoundError } from "../../utils/errors";
+import { AppDataSource } from "../../db";
+import { Category, type Note } from "../../entities";
+import { notFoundError } from "../../utils";
 
 export const serializeNote = (note: Note) => ({
 	id: note.id,

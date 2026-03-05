@@ -1,18 +1,22 @@
 import bcrypt from "bcryptjs";
 import type { Context, ServiceSchema } from "moleculer";
 
-import { AppDataSource } from "../db/data-source";
-import { User } from "../entities/user.entity";
+import { AppDataSource } from "../db";
+import { User } from "../entities";
 import {
 	sanitizeUser,
 	serializeUserWithPassword,
-} from "../modules/users/helpers";
+} from "../modules/users";
 import {
 	createUserSchema,
 	type CreateUserParams,
-} from "../modules/users/schemas";
-import { conflictError, notFoundError } from "../utils/errors";
-import { assertNumberId, createValidationError } from "../utils/validation";
+} from "../modules/users";
+import {
+	assertNumberId,
+	conflictError,
+	createValidationError,
+	notFoundError,
+} from "../utils";
 
 const UsersService: ServiceSchema = {
 	name: "users",

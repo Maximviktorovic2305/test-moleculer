@@ -1,4 +1,4 @@
-import type { User } from "../../entities/user.entity";
+import type { User } from "../../entities";
 
 export const sanitizeUser = (user: User) => ({
 	id: user.id,

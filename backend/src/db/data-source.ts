@@ -1,10 +1,7 @@
 import { DataSource } from "typeorm";
 
-import { env } from "../config/env";
-import { Category } from "../entities/category.entity";
-import { Note } from "../entities/note.entity";
-import { RefreshSession } from "../entities/refresh-session.entity";
-import { User } from "../entities/user.entity";
+import { env } from "../config";
+import { Category, Note, RefreshSession, User } from "../entities";
 import { CreateInitialSchema1730000000001 } from "./migrations/1730000000001-CreateInitialSchema";
 import { SeedInitialData1730000000002 } from "./migrations/1730000000002-SeedInitialData";
 import { CreateRefreshSessions1730000000003 } from "./migrations/1730000000003-CreateRefreshSessions";

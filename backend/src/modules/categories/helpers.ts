@@ -1,4 +1,4 @@
-import type { Category } from "../../entities/category.entity";
+import type { Category } from "../../entities";
 
 export const serializeCategory = (category: Category) => ({
 	id: category.id,

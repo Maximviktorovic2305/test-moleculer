@@ -79,6 +79,21 @@ export const useSessionEntity = () => {
     resetWorkspace();
   };
 
+  const redirectToAuth = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (window.location.pathname !== "/auth") {
+      window.location.replace("/auth");
+    }
+  };
+
+  const resetSessionAndRedirectToAuth = () => {
+    clearSessionData();
+    redirectToAuth();
+  };
+
   const isUnauthorizedError = (error: unknown) => {
     if (!(error instanceof ApiError)) {
       return false;
@@ -131,24 +146,48 @@ export const useSessionEntity = () => {
   };
 
   const withAuthorizedRequest = async <T>(operation: (token: string) => Promise<T>): Promise<T> => {
+    syncTokensFromStorage();
+
     if (!accessToken.value) {
-      return operation("");
+      resetSessionAndRedirectToAuth();
+      throw new ApiError("Access token missing", 401, "UNAUTHORIZED");
     }
 
     try {
       return await operation(accessToken.value);
     } catch (error) {
       if (!isUnauthorizedError(error) || !refreshToken.value) {
+        if (isUnauthorizedError(error)) {
+          resetSessionAndRedirectToAuth();
+        }
+
         throw error;
       }
 
-      await refreshSession();
+      try {
+        await refreshSession();
+      } catch (refreshError) {
+        if (isUnauthorizedError(refreshError)) {
+          resetSessionAndRedirectToAuth();
+        }
+
+        throw refreshError;
+      }
 
       if (!accessToken.value) {
+        resetSessionAndRedirectToAuth();
         throw error;
       }
 
-      return operation(accessToken.value);
+      try {
+        return await operation(accessToken.value);
+      } catch (retryError) {
+        if (isUnauthorizedError(retryError)) {
+          resetSessionAndRedirectToAuth();
+        }
+
+        throw retryError;
+      }
     }
   };
 
@@ -163,12 +202,14 @@ export const useSessionEntity = () => {
       sessionBootstrapPromise = (async () => {
         if (!accessToken.value && !refreshToken.value) {
           sessionReady.value = true;
+          redirectToAuth();
           return;
         }
 
         if (!accessToken.value || !refreshToken.value) {
           clearSession(options.resetWorkspace);
           sessionReady.value = true;
+          redirectToAuth();
           return;
         }
 
@@ -177,6 +218,7 @@ export const useSessionEntity = () => {
           if (!validation.refreshTokenValid) {
             clearSession(options.resetWorkspace);
             sessionReady.value = true;
+            redirectToAuth();
             return;
           }
 
@@ -189,6 +231,7 @@ export const useSessionEntity = () => {
           console.error("Session bootstrap error", error);
           if (isUnauthorizedError(error)) {
             clearSession(options.resetWorkspace);
+            redirectToAuth();
           }
         } finally {
           sessionReady.value = true;

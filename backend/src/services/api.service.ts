@@ -3,17 +3,21 @@ import type { ServiceSchema } from "moleculer";
 import type { Context } from "moleculer";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import { corsOrigins, env, rateLimitSkipPaths } from "../config/env";
+import { corsOrigins, env, rateLimitSkipPaths } from "../config";
 import { appLogger } from "../logger";
-import { API_ALIASES } from "../modules/api/aliases";
+import { API_ALIASES } from "../modules/api";
 import {
 	extractPathname,
 	normalizeMethod,
 	resolveClientIp,
-} from "../modules/rate-limit/helpers";
-import type { RateLimitConsumeResult } from "../modules/rate-limit/types";
+} from "../modules/rate-limit";
+import type { RateLimitConsumeResult } from "../modules/rate-limit";
 import type { ServiceMeta } from "../types/service-meta";
-import { formatApiError, tooManyRequestsError } from "../utils/errors";
+import {
+	formatApiError,
+	tooManyRequestsError,
+	unauthorizedError,
+} from "../utils";
 
 const apiLogger = appLogger.child({
 	service: "api",
@@ -21,6 +25,51 @@ const apiLogger = appLogger.child({
 
 const isRateLimitExcluded = (path: string) => {
 	return rateLimitSkipPaths.some((excludedPath) => excludedPath === path);
+};
+
+type AuthMode = "optional" | "required" | "refresh";
+
+const OPTIONAL_ROUTE_KEYS = new Set([
+	"GET /health",
+	"POST /auth/register",
+	"POST /auth/login",
+]);
+
+const REFRESH_ROUTE_KEYS = new Set([
+	"POST /auth/refresh",
+	"POST /auth/logout",
+	"POST /auth/validate",
+]);
+
+const resolveRequestAuthMode = (req: IncomingMessage): AuthMode => {
+	const method = normalizeMethod(req.method);
+	const path = extractPathname(req.url);
+	const routeKey = `${method} ${path}`;
+
+	if (OPTIONAL_ROUTE_KEYS.has(routeKey)) {
+		return "optional";
+	}
+
+	if (REFRESH_ROUTE_KEYS.has(routeKey)) {
+		return "refresh";
+	}
+
+	return "required";
+};
+
+const extractBearerToken = (req: IncomingMessage): string | null => {
+	const header = req.headers.authorization;
+	if (!header || Array.isArray(header)) {
+		return null;
+	}
+
+	const [scheme, token] = header.split(" ", 2);
+	if (!scheme || !token || scheme.toLowerCase() !== "bearer") {
+		return null;
+	}
+
+	const normalized = token.trim();
+	return normalized.length > 0 ? normalized : null;
 };
 
 const ApiService: ServiceSchema = {
@@ -36,6 +85,8 @@ const ApiService: ServiceSchema = {
 				whitelist: ["**"],
 				autoAliases: false,
 				aliases: API_ALIASES,
+				authentication: true,
+				authorization: true,
 				mappingPolicy: "restrict",
 				bodyParsers: {
 					json: true,
@@ -208,12 +259,80 @@ const ApiService: ServiceSchema = {
 
 	actions: {
 		health: {
+			auth: "optional",
 			handler() {
 				return {
 					status: "ok",
 					timestamp: new Date().toISOString(),
 				};
 			},
+		},
+	},
+
+	methods: {
+		async authenticate(
+			ctx: Context<unknown, ServiceMeta>,
+			_route: unknown,
+			req: IncomingMessage,
+		) {
+			const authMode = resolveRequestAuthMode(req);
+			const token = extractBearerToken(req);
+
+			if (!token) {
+				if (authMode === "optional") {
+					return null;
+				}
+
+				throw unauthorizedError("Authorization token is required");
+			}
+
+			try {
+				const payload =
+					authMode === "refresh"
+						? ((await ctx.call("tokens.validateRefresh", {
+								refreshToken: token,
+							})) as {
+								userId: number;
+								email: string;
+							})
+						: ((await ctx.call("tokens.validateAccess", {
+								accessToken: token,
+							})) as {
+								userId: number;
+								email: string;
+							});
+
+				const user = (await ctx.call("users.getById", {
+					id: payload.userId,
+				})) as { id: number; email: string; name: string };
+
+				return {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+				};
+			} catch (error) {
+				if (authMode === "optional") {
+					return null;
+				}
+
+				throw error;
+			}
+		},
+
+		async authorize(
+			ctx: Context<unknown, ServiceMeta>,
+			_route: unknown,
+			req: IncomingMessage,
+		) {
+			const authMode = resolveRequestAuthMode(req);
+			if (authMode === "optional") {
+				return;
+			}
+
+			if (!ctx.meta.user) {
+				throw unauthorizedError("Unauthorized");
+			}
 		},
 	},
 };

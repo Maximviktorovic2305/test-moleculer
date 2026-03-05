@@ -1,13 +1,11 @@
 import type { Context, ServiceSchema } from "moleculer";
 
-import { AppDataSource } from "../db/data-source";
-import { Category } from "../entities/category.entity";
-import { serializeCategory } from "../modules/categories/helpers";
-import { categoryInputSchema } from "../modules/categories/schemas";
-import { resolveRequestUserId } from "../modules/users/request-user";
+import { AppDataSource } from "../db";
+import { Category } from "../entities";
+import { categoryInputSchema, serializeCategory } from "../modules/categories";
+import { resolveRequestUserId } from "../modules/users";
 import type { ServiceMeta } from "../types/service-meta";
-import { notFoundError } from "../utils/errors";
-import { assertNumberId, createValidationError } from "../utils/validation";
+import { assertNumberId, createValidationError, notFoundError } from "../utils";
 
 const CategoriesService: ServiceSchema = {
 	name: "categories",
@@ -15,6 +13,7 @@ const CategoriesService: ServiceSchema = {
 	actions: {
 		list: {
 			rest: "GET /categories",
+			auth: "required",
 			async handler(ctx: Context<undefined, ServiceMeta>) {
 				const userId = await resolveRequestUserId(ctx.meta.user?.id);
 
@@ -30,6 +29,7 @@ const CategoriesService: ServiceSchema = {
 
 		create: {
 			rest: "POST /categories",
+			auth: "required",
 			params: {
 				name: { type: "string", min: 2, max: 120, trim: true },
 			},
@@ -54,6 +54,7 @@ const CategoriesService: ServiceSchema = {
 
 		update: {
 			rest: "PATCH /categories/:id",
+			auth: "required",
 			params: {
 				id: [
 					{ type: "number", integer: true, positive: true },
@@ -95,6 +96,7 @@ const CategoriesService: ServiceSchema = {
 
 		remove: {
 			rest: "DELETE /categories/:id",
+			auth: "required",
 			params: {
 				id: [
 					{ type: "number", integer: true, positive: true },

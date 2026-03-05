@@ -1,3 +1,6 @@
+import axios, { AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
+
+import { readStoredTokens } from "@/lib/storage";
 import type { ApiErrorPayload } from "@/types";
 
 export class ApiError extends Error {
@@ -38,41 +41,92 @@ const resolveApiUrl = () => {
 
 const API_URL = resolveApiUrl().replace(/\/$/, "");
 
+type RequestConfigWithAuthToken = InternalAxiosRequestConfig & {
+  authToken?: string | null;
+};
+
+const normalizeToken = (token: string | null | undefined) => {
+  if (typeof token !== "string") {
+    return null;
+  }
+
+  const normalized = token.trim();
+  return normalized.length > 0 ? normalized : null;
+};
+
+const resolveHeaders = (headers?: HeadersInit) => {
+  if (!headers) {
+    return {};
+  }
+
+  return Object.fromEntries(new Headers(headers).entries());
+};
+
+const toApiError = (error: unknown): ApiError => {
+  if (error instanceof ApiError) {
+    return error;
+  }
+
+  if (axios.isAxiosError(error)) {
+    const payload = error.response?.data as ApiErrorPayload | null | undefined;
+
+    return new ApiError(
+      payload?.message || error.message || "Request failed",
+      error.response?.status ?? 500,
+      payload?.code,
+      payload?.details,
+    );
+  }
+
+  if (error instanceof Error) {
+    return new ApiError(error.message, 500, "INTERNAL_ERROR");
+  }
+
+  return new ApiError("Request failed", 500, "INTERNAL_ERROR");
+};
+
+const http = axios.create({
+  baseURL: API_URL,
+});
+
+http.interceptors.request.use((config) => {
+  const requestConfig = config as RequestConfigWithAuthToken;
+
+  const explicitToken = normalizeToken(requestConfig.authToken);
+  const storedAccessToken = normalizeToken(readStoredTokens().accessToken);
+  const token = explicitToken ?? storedAccessToken;
+
+  const headers = AxiosHeaders.from(config.headers);
+  if (!headers.get("Content-Type") && !(config.data instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (token && !headers.get("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  config.headers = headers;
+  return config;
+});
+
+http.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(toApiError(error)),
+);
+
 export const request = async <T>(
   path: string,
   options: RequestInit = {},
   token?: string | null,
 ): Promise<T> => {
-  const normalizedToken = typeof token === "string" ? token.trim() : token;
+  const normalizedToken = normalizeToken(token);
+  const response = await http.request<T>({
+    url: path,
+    method: options.method,
+    data: options.body,
+    headers: resolveHeaders(options.headers),
+    authToken: normalizedToken,
+  } as RequestConfigWithAuthToken);
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers ?? {}),
-      ...(normalizedToken ? { Authorization: `Bearer ${normalizedToken}` } : {}),
-    },
-  });
-
-  const rawText = await response.text();
-  let payload: unknown = null;
-  if (rawText) {
-    try {
-      payload = JSON.parse(rawText) as unknown;
-    } catch {
-      payload = null;
-    }
-  }
-
-  if (!response.ok) {
-    const errorPayload = (payload as ApiErrorPayload | null) ?? { message: "Request failed" };
-    throw new ApiError(
-      errorPayload.message || "Request failed",
-      response.status,
-      errorPayload.code,
-      errorPayload.details,
-    );
-  }
-
-  return payload as T;
+  return response.data;
 };

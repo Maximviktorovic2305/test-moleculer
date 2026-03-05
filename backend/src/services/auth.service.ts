@@ -2,25 +2,28 @@ import bcrypt from "bcryptjs";
 
 import type { Context, ServiceSchema } from "moleculer";
 
-import { buildAuthResponse } from "../modules/auth/helpers";
 import {
+	buildAuthResponse,
 	loginSchema,
 	refreshSchema,
 	registerSchema,
-	validateTokensSchema,
 	type LoginInput,
 	type RefreshInput,
 	type RegisterInput,
 	type ValidateTokensInput,
-} from "../modules/auth/schemas";
-import { resolveRequestUserId } from "../modules/users/request-user";
+	validateTokensSchema,
+} from "../modules/auth";
+import { resolveRequestUserId } from "../modules/users";
 import type {
 	PublicUser,
 	PublicUserWithPassword,
-} from "../modules/users/types";
+} from "../modules/users";
 import type { ServiceMeta } from "../types/service-meta";
-import { createApiError, invalidCredentialsError } from "../utils/errors";
-import { createValidationError } from "../utils/validation";
+import {
+	createApiError,
+	createValidationError,
+	invalidCredentialsError,
+} from "../utils";
 
 const AuthService: ServiceSchema = {
 	name: "auth",
@@ -220,6 +223,7 @@ const AuthService: ServiceSchema = {
 
 		me: {
 			rest: "GET /auth/me",
+			auth: "required",
 			async handler(ctx: Context<undefined, ServiceMeta>) {
 				const userId = await resolveRequestUserId(ctx.meta.user?.id);
 

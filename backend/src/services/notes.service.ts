@@ -1,21 +1,25 @@
 import type { Context, ServiceSchema } from "moleculer";
 
-import { AppDataSource } from "../db/data-source";
-import { Note } from "../entities/note.entity";
+import { AppDataSource } from "../db";
+import { Note } from "../entities";
 import {
 	ensureCategoryOwnership,
 	normalizeCategoryId,
 	serializeNote,
-} from "../modules/notes/helpers";
+} from "../modules/notes";
 import {
 	createNoteSchema,
 	listNotesSchema,
 	updateNoteSchema,
-} from "../modules/notes/schemas";
-import { resolveRequestUserId } from "../modules/users/request-user";
+} from "../modules/notes";
+import { resolveRequestUserId } from "../modules/users";
 import type { ServiceMeta } from "../types/service-meta";
-import { createApiError, notFoundError } from "../utils/errors";
-import { assertNumberId, createValidationError } from "../utils/validation";
+import {
+	assertNumberId,
+	createApiError,
+	createValidationError,
+	notFoundError,
+} from "../utils";
 
 const NotesService: ServiceSchema = {
 	name: "notes",
@@ -23,6 +27,7 @@ const NotesService: ServiceSchema = {
 	actions: {
 		list: {
 			rest: "GET /notes",
+			auth: "required",
 			params: {
 				search: {
 					type: "string",
@@ -89,6 +94,7 @@ const NotesService: ServiceSchema = {
 
 		get: {
 			rest: "GET /notes/:id",
+			auth: "required",
 			params: {
 				id: [
 					{ type: "number", integer: true, positive: true },
@@ -116,6 +122,7 @@ const NotesService: ServiceSchema = {
 
 		create: {
 			rest: "POST /notes",
+			auth: "required",
 			params: {
 				title: { type: "string", min: 1, max: 255, trim: true },
 				content: { type: "string", min: 1, max: 10000, trim: true },
@@ -177,6 +184,7 @@ const NotesService: ServiceSchema = {
 
 		update: {
 			rest: "PATCH /notes/:id",
+			auth: "required",
 			params: {
 				id: [
 					{ type: "number", integer: true, positive: true },
@@ -278,6 +286,7 @@ const NotesService: ServiceSchema = {
 
 		remove: {
 			rest: "DELETE /notes/:id",
+			auth: "required",
 			params: {
 				id: [
 					{ type: "number", integer: true, positive: true },

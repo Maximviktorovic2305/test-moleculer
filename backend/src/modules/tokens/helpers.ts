@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import { signAccessToken, signRefreshToken } from "../../utils/jwt";
+import { signAccessToken, signRefreshToken } from "../../utils";
 import type { PairInput } from "./schemas";
 
 export const hashRefreshToken = (token: string) => {

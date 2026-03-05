@@ -1,17 +1,18 @@
 import "reflect-metadata";
 
 import { ServiceBroker } from "moleculer";
-
-import { env } from "./config/env";
-import { AppDataSource } from "./db/data-source";
+import { env } from "./config";
+import { AppDataSource } from "./db";
 import { appLogger } from "./logger";
-import ApiService from "./services/api.service";
-import AuthService from "./services/auth.service";
-import CategoriesService from "./services/categories.service";
-import NotesService from "./services/notes.service";
-import RateLimiterService from "./services/rate-limiter.service";
-import TokensService from "./services/tokens.service";
-import UsersService from "./services/users.service";
+import {
+	ApiService,
+	AuthService,
+	CategoriesService,
+	NotesService,
+	RateLimiterService,
+	TokensService,
+	UsersService,
+} from "./services";
 
 const startupLogger = appLogger.child({
 	scope: "bootstrap",
